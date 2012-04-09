@@ -30,6 +30,17 @@ int main(int argc, const char * argv[])
 		
 		argument = [argument stringByExpandingTildeInPath];
 		
+		NSString *pwd = [NSString stringWithCString:getenv("PWD") encoding:NSUTF8StringEncoding];
+		if (pwd == nil) {
+			NSLog(@"You appear not to have a pwd… I have no idea how you have managed that so I'm getting the hell out of here!");
+			return EXIT_FAILURE;
+		}
+		
+		NSString *initialChar = [argument substringToIndex:1];
+		if (![initialChar isEqualToString:@"~"] && ![initialChar isEqualToString:@"/"]) {
+			argument = [pwd stringByAppendingPathComponent:argument];
+		}
+		
 	    NSURL *fileLocation = [NSURL fileURLWithPath:argument];
 		if (fileLocation == nil) {
 			printUsage();
