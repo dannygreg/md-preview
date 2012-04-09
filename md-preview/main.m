@@ -17,20 +17,31 @@ int main(int argc, const char * argv[])
 {
 
 	@autoreleasepool {
-	    if (argc != 1) {
+	    if (argc != 2) {
 			printUsage();
-			return 1;
+			return EXIT_FAILURE;
 		}
 		
-		NSString *argument = [NSString stringWithCString:argv[0] encoding:NSUTF8StringEncoding];
+		NSString *argument = [NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding];
 		if (argument == nil) {
 			printUsage();
-			return 1;
+			return EXIT_FAILURE;
 		}
 		
-	    
-	    
+		argument = [argument stringByExpandingTildeInPath];
+		
+	    NSURL *fileLocation = [NSURL fileURLWithPath:argument];
+		if (fileLocation == nil) {
+			printUsage();
+			return EXIT_FAILURE;
+		}
+		
+		if (![fileLocation.pathExtension isEqualToString:@"md"] && ![fileLocation.pathExtension isEqualToString:@"markdown"])
+			NSLog(@"This doesn't seem to be a markdown file… Imma try… but look, I'm not promising anything.");
+	
+		
 	}
+
     return 0;
 }
 
