@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#import "html.h"
+#import "markdown.h"
+
 void printUsage()
 {
 	NSLog(@"md-preview takes 1 argument: the path to a markdown document.");
@@ -50,9 +53,37 @@ int main(int argc, const char * argv[])
 		if (![fileLocation.pathExtension isEqualToString:@"md"] && ![fileLocation.pathExtension isEqualToString:@"markdown"])
 			NSLog(@"This doesn't seem to be a markdown file… Imma try… but look, I'm not promising anything.");
 	
+		NSError *err = nil;
+		NSString *fileContents = [NSString stringWithContentsOfURL:fileLocation encoding:NSUTF8StringEncoding error:&err]; //Yeah… I should figure out the encoding but cba.
+		if (fileContents == nil) {
+			NSLog(@"Couldn't load the markdown file. Here is what the NSError has to say about it:\n\n%@", err.localizedDescription);
+			return EXIT_FAILURE;
+		}
 		
+		const char *prose = [fileContents UTF8String];
+		struct buf *ib = bufnew(strlen(prose));
+		bufputs(ib, prose);
+		
+		struct buf *ob = bufnew(64);
+		struct sd_callbacks callbacks;
+		struct html_renderopt options;
+		sdhtml_renderer(&callbacks, &options, 0);
+		struct sd_markdown *markdown = sd_markdown_new(0, 16, &callbacks, &options);
+		sd_markdown_render(ob, ib->data, ib->size, markdown);
+		sd_markdown_free(markdown);
+		
+		NSString *html = [NSString stringWithUTF8String:bufcstr(ob)];
+		bufrelease(ib);
+		bufrelease(ob);
+		 
+		//Put the html right next to the original .md. This way we don't have to worry about cluttering up the system with rogue html files
+		NSURL *htmlLocation = [[fileLocation URLByDeletingPathExtension] URLByAppendingPathExtension:@"html"];
+		if (![html writeToURL:htmlLocation atomically:YES encoding:NSUTF8StringEncoding error:&err]) {
+			NSLog(@"We couldn't write out the completed html. Here is what the NSError has to say:\n\n%@", err.localizedDescription);
+			return EXIT_FAILURE;
+		}
 	}
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
