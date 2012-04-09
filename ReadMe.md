@@ -13,3 +13,5 @@ MIT
 * Change monitoring
 	- Use -i and the program will stay active, watching for changes… or something.
 * Better encoding handling.
+* brew
+	- `brew install md-preview` would be a wonderful thing.
