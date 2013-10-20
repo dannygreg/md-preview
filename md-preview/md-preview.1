@@ -16,6 +16,17 @@ The
 argument specifies the input file. The output file will be written into
 the same directory, with the extension replaced with
 .Pa html .
+.Sh ENVIRONMENT
+.Bl -tag -width -compact
+.It PWD
+Used if the
+.Ar file
+argument is a relative path. If
+.Ev PWD
+variable is unset,
+.Nm
+will exit with the code
+.Sy EXIT_FAILURE .
 .Sh DIAGNOSTICS
 .Bl -diag
 .It EXIT_SUCCESS
