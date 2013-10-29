@@ -1,0 +1,36 @@
+.Dd 10/20/2013               \" DATE 
+.Dt md-preview 1      \" Program name and manual section number 
+.Os Darwin
+.Sh NAME                 \" Section Header - required - don't modify 
+.Nm md-preview
+.Nd Markdown processor
+.Sh SYNOPSIS             \" Section Header - required - don't modify
+.Nm
+.Ar file
+.Sh DESCRIPTION          \" Section Header - required - don't modify
+.Nm
+translates Markdown text into an equivalent HTML file.
+.Pp
+The
+.Ar file
+argument specifies the input file. The output file will be written into
+the same directory, with the extension replaced with
+.Pa html .
+.Sh ENVIRONMENT
+.Bl -tag -width -compact
+.It PWD
+Used if the
+.Ar file
+argument is a relative path. If
+.Ev PWD
+variable is unset,
+.Nm
+will exit with the code
+.Sy EXIT_FAILURE .
+.Sh DIAGNOSTICS
+.Bl -diag
+.It EXIT_SUCCESS
+The HTML file was successfully generated.
+.It EXIT_FAILURE
+An error occurred. More information is available on standard output.
+.El
